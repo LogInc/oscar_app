@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Oscar</string>
+    <string name="title_activity_login">Login</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="Password">Password</string>
+    <string name="Username">Username</string>
+    <string name="SignIn">Sign In</string>
+    <string name="title_activity_home">Home</string>
+    <string name="Modes">House Modes</string>
+    <string name="OscarHouse">Enter Oscar Home</string>
+    <string name="title_activity_modes">Modes</string>
+    <string name="Gathering">Gathering Mode</string>
+    <string name="Power">Power Saving</string>
+    <string name="LightsOut">Lights Out</string>
+
+</resources>
