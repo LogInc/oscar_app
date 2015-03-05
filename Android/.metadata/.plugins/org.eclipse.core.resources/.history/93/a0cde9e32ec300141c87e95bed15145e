@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Button
+        android:id="@+id/Living1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="65dp"
+        android:text="Living Light 1" />
+
+     <Button
+         android:id="@+id/Living2"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignLeft="@+id/Living1"
+         android:layout_below="@+id/Living1"
+         android:layout_marginTop="34dp"
+         android:text="Living Light 2" />
+
+     <Button
+         android:id="@+id/DrawingRoom"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerHorizontal="true"
+         android:layout_centerVertical="true"
+         android:text="Drawing Room Light" />
+
+     <Button
+         android:id="@+id/BedRoom"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/DrawingRoom"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="36dp"
+         android:text="Bed Room Light" />
+     
+     <Button
+        android:id="@+id/Study Room"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Study Room Light" />
+
+</RelativeLayout>

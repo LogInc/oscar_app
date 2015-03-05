@@ -24,7 +24,7 @@ public class Login extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent Home = new Intent("com.log.oscar.HOME");
+				Intent Home = new Intent("com.log.oscar.DLA");
 				startActivity(Home);
 			}
 		});

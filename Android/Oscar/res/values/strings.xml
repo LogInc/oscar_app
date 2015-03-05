@@ -16,5 +16,6 @@
     <string name="LightsOut">Lights Out</string>
     <string name="Study">Study Mode</string>
     <string name="State">No State</string>
+    <string name="demoMsg">You have entered demonstration mode. All lights will be switched on one by one.</string>
 
 </resources>

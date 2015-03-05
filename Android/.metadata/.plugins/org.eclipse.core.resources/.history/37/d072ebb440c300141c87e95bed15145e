@@ -1,0 +1,203 @@
+package com.log.oscar;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.UUID;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Fragment;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
+
+public class Home extends Activity {
+	
+	String[] menu;
+	DrawerLayout dLayout;
+	ListView dList;
+	ArrayAdapter<String> adapter;
+	Button oscarHouse;
+	private BluetoothAdapter btAdap = null;
+	private BluetoothSocket btSocket = null;
+	private OutputStream outStream = null;
+	
+	// UUID service - This is the type of Bluetooth device that the BT module is
+		private static final UUID MY_UUID = UUID
+				.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+		// MAC-Address of HC-05
+		public String Mac_Address = null;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_home);
+		
+		oscarHouse = (Button) findViewById(R.id.enterOscar);
+
+		menu = new String[] { "Home","Demonstartion Mode", "Study Mode", "Gathering Mode", "Lights Out" };
+		dLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		dList = (ListView) findViewById(R.id.left_drawer);
+		adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, menu);
+		dList.setAdapter(adapter);
+		dList.setSelector(android.R.color.holo_blue_dark);
+		
+		oscarHouse.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent OH = new Intent("com.log.oscar.ROOMS");
+				startActivity(OH);
+			}
+		});
+
+
+		dList.setOnItemClickListener(new OnItemClickListener() {
+			@SuppressLint("NewApi")
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View v, int position,
+					long id) {
+				dLayout.closeDrawers();
+				Bundle args = new Bundle();
+				args.putString("Menu", menu[position]);
+				Fragment detail = new Fragment_details();
+				detail.setArguments(args);
+				android.app.FragmentManager fragmentManager = getFragmentManager();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, detail).commit();
+			}
+
+			
+		});
+
+		btAdap = BluetoothAdapter.getDefaultAdapter();
+		checkBTState();
+
+	}
+	
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Intent intent = getIntent();
+		Mac_Address = intent
+				.getStringExtra(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+		// Set up a pointer to the remote device using its address.
+		BluetoothDevice device = btAdap.getRemoteDevice(Mac_Address);
+
+		// Attempt to create a bluetooth socket for comms
+		try {
+			btSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			Toast.makeText(getBaseContext(),
+					"ERROR - Could not create Bluetooth socket",
+					Toast.LENGTH_SHORT).show();
+		}
+
+		// Establish the connection
+
+		try {
+			btSocket.connect();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			try {
+				btSocket.close(); // if IO exception catches attempt to close
+									// the socket.
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				Toast.makeText(getBaseContext(),
+						"ERROR - Could not close Bluetooth socket",
+						Toast.LENGTH_SHORT).show();
+				// e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+
+		// Create a data stream so we can talk to the device
+		try {
+			outStream = btSocket.getOutputStream();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			Toast.makeText(getBaseContext(),
+					"ERROR - Could not create bluetooth outstream",
+					Toast.LENGTH_SHORT).show();
+		}
+
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		// song.release();
+
+		try {
+			btSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(getBaseContext(),
+					"ERROR - Failed to close Bluetooth socket",
+					Toast.LENGTH_SHORT).show();
+		}
+
+		// finish();
+	}
+
+	// takes the UUID and creates a comms socket
+	/*
+	 * private BluetoothSocket createBluetoothSocket(BluetoothDevice device)
+	 * throws IOException {
+	 * 
+	 * return device.createRfcommSocketToServiceRecord(MY_UUID); }
+	 */
+	private void checkBTState() {
+		// Check device has Bluetooth and that it is turned on
+		if (btAdap == null) {
+			Toast.makeText(getBaseContext(),
+					"ERROR - Device does not support bluetooth",
+					Toast.LENGTH_SHORT).show();
+			finish();
+		} else {
+			if (btAdap.isEnabled()) {
+			} else {
+				// Prompt user to turn on Bluetooth
+				Intent enableBtIntent = new Intent(
+						BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				startActivityForResult(enableBtIntent, 1);
+			}
+		}
+	}
+
+	private void sendData(String string) {
+		// byte[] msgBuffer = msg.getBytes();
+		// byte[] terminator = { 0xD, 0xA };
+
+		try {
+			outStream.write(string.getBytes());
+			// outStream.write(terminator);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			finish();
+		}
+	}
+}
